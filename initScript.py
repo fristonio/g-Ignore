@@ -17,7 +17,7 @@ if __name__ == "__main__":
             else:
                 continue
 
-    langExtList = []
+    langExtList = {}
     with open("lang-ext.json", "r") as file:
         langJSON = json.load(file)
         for lang in langList:
@@ -25,14 +25,7 @@ if __name__ == "__main__":
             for key, value in langJSON.items():
                 if value.lower() == lang.lower():
                     extensions.append(key)
-            langExtList.append({lang: extensions})
-
-    a = []
-
-    for lang in langExtList:
-        key, val = list(lang.keys())[0], list(lang.values())[0]
-        if val:
-            a.append({key: val})
+            langExtList[lang] = extensions
 
     with open("gitIgnore-lang.json", "w") as file:
-        json.dump(a, file)
+        json.dump(langExtList, file)
