@@ -2,8 +2,12 @@
 
 import os
 import json
+import sys
 import re
 import fnmatch
+import argparse
+import initScript
+import utils
 
 
 APP_PATH = os.environ['HOME'] + "/.gIgnore/"
@@ -35,9 +39,17 @@ def refineGitignore(contents, files):
 
 
 def saveUserDefinedIgnores():
-    with open(".gitignore", "r") as gitIgn:
-        userIgn = gitIgn.read().split("#")[1]
-    return "#" + userIgn
+    """
+    User can add their own ignores that won't be wiped out during the
+    updation of gitignore by adding a comment(#) before ignores at the
+    end of the file.
+    """
+    try:
+        with open(".gitignore", "r") as gitIgn:
+            userIgn = gitIgn.read().split("#")[1]
+        return "#" + userIgn
+    except:
+        return ""
 
 
 def createGitignore(gitIgnoreLangs, files):
@@ -93,24 +105,56 @@ def traverseDirectory(cwd):
             try:
                 re.search(r'/(\.\w+)', curDir).group(0)
             except:
-                allDirs = allDirs + dirs
+                for d in dirs:
+                    allDirs.append(d + '/')
                 allFiles = allFiles + files
         return allFiles, allDirs
     else:
         print("[-] Directory is not a git repository")
+        sys.exit(1)
 
 
 def main():
     allFiles, allDirs = traverseDirectory(os.getcwd())
     gitIgnoreLangs = getLangs(allFiles)
     data = allDirs + allFiles
+    print(data)
     createGitignore(gitIgnoreLangs, data)
     print("[*] Updated gitignore successfully")
 
 
+def parseArgs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u",
+                        "--update",
+                        help="Update gitignore for gIgnores",
+                        action="store_true"
+                        )
+    parser.add_argument("-s",
+                        "--supports",
+                        help="Prints supported languages ...",
+                        action="store_true"
+                        )
+    parser.add_argument("-i",
+                        "--langIgnore",
+                        help="To view standard ignores for the given language",
+                        )
+    args = parser.parse_args()
+    return args
+
+
 if __name__ == "__main__":
+    args = parseArgs()
     try:
         os.stat(APP_PATH)
-        main()
     except Exception as e:
-        print(e)
+        print("[*] Initializing gIgnore ...")
+
+    if args.update:
+        initScript.main()
+    elif args.supports:
+        utils.showSupportedLangs()
+    elif args.langIgnore:
+        utils.showLangIgnores(args.langIgnore)
+    else:
+        main()
