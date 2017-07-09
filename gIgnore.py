@@ -9,7 +9,7 @@ import fnmatch
 APP_PATH = os.environ['HOME'] + "/.gIgnore/"
 
 
-def removeDuplicate():
+def removeDuplicate(saved):
     """
     Remove duplicate file matching from gitignore files
     """
@@ -21,6 +21,7 @@ def removeDuplicate():
     with open(".gitignore", "w") as gitIgn:
         for file in seen:
             gitIgn.write(file + '\n')
+        gitIgn.write(saved)
 
 
 def refineGitignore(contents, files):
@@ -33,7 +34,14 @@ def refineGitignore(contents, files):
     return refinedContents
 
 
+def saveUserDefinedIgnores():
+    with open(".gitignore", "r") as gitIgn:
+        userIgn = gitIgn.read().split("#")[1]
+    return "#" + userIgn
+
+
 def createGitignore(gitIgnoreLangs, files):
+    saved = saveUserDefinedIgnores()
     with open(".gitignore", "w") as gitIgn:
         for lang in gitIgnoreLangs:
             gitignoreContent = ""
@@ -44,7 +52,7 @@ def createGitignore(gitIgnoreLangs, files):
                     gitIgn.write(gitignoreContent)
             except:
                 pass
-    removeDuplicate()
+    removeDuplicate(saved)
 
 
 def getLangs(files):
@@ -89,7 +97,7 @@ def traverseDirectory(cwd):
                 allFiles = allFiles + files
         return allFiles, allDirs
     else:
-        print("[-] Directory is not a git repository") 
+        print("[-] Directory is not a git repository")
 
 
 def main():
@@ -97,6 +105,7 @@ def main():
     gitIgnoreLangs = getLangs(allFiles)
     data = allDirs + allFiles
     createGitignore(gitIgnoreLangs, data)
+    print("[*] Updated gitignore successfully")
 
 
 if __name__ == "__main__":
