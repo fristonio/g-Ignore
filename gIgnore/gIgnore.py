@@ -126,7 +126,7 @@ def parseArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument("-u",
                         "--update",
-                        help="Update gitignore for gIgnores",
+                        help="Update gitignores for gIgnore",
                         action="store_true"
                         )
     parser.add_argument("-s",
