@@ -1,45 +1,43 @@
 #!/usr/bin/python3
 
-from bs4 import BeautifulSoup
 from threading import Thread
 import requests
 import json
 import os
 import sys
-
-GITIGNORE_URL = "https://github.com/github/gitignore"
-APP_PATH = os.environ['HOME'] + "/.gIgnore/"
-LANG_MAP_URL = "https://raw.githubusercontent.com/fristonio/Resources/master/lang-ext.json?token=AUTlN77tEmAu0tHawfIJnZTvHyN7EeT3ks5ZZ77iwA%3D%3D"
-GITIGNORE_BASE_URL = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
+from .config import Config
+from . import utils
 
 
-def getGitIgnoreLanguages():
-    """
-    Get Languages supported by github/gitignore
-    Returns a python list storing languages names
-    """
-    a = requests.get(GITIGNORE_URL)
-    langList = []
-    if a.status_code == 200:
-        soup = BeautifulSoup(a.text, "lxml")
-        spans = soup.find_all("a", attrs={"class": "js-navigation-open"})
-        for span in spans:
-            if "gitignore" in span.text:
-                langList.append(span.text.split(".")[0])
-            else:
-                continue
-    return langList
+CONFIG = Config.getConfig()
 
 
 def getLangExtMapping():
-    """ Returns Languages-File_Extensions mapping from my Resources Repo"""
+    """
+    Returns Languages-File_Extensions mapping from my Resources Repo
+    """
     try:
-        res = requests.get(LANG_MAP_URL)
+        res = requests.get(CONFIG["LANG_MAP_URL"])
         mappingJson = json.loads(res.text)
         return mappingJson
     except:
         sys.stderr.write("[-] An error occurred while fetching language mapping")
         sys.exit(1)
+
+
+def getFilteredMapping(langList, langExtMapping):
+    filteredMapping = {}
+    for lang in langList:
+        extensions = []
+        for key, value in langExtMapping.items():
+            if value.lower() == lang.lower():
+                extensions.append(key)
+        if len(extensions) != 0:
+            filteredMapping[lang] = extensions
+
+    with open(CONFIG["APP_PATH"] + "langs.json", "w") as file:
+        json.dump(filteredMapping, file)
+    return filteredMapping
 
 
 def refineData(data):
@@ -53,11 +51,11 @@ def refineData(data):
 
 def updateGitignoreFile(lang):
     """
-    Fetch gitignore files from github/gitignore
+    Fetch gitignore files from github/gitignore for the given language
     """
     try:
-        langPath = APP_PATH + lang + '.gitignore'
-        res = requests.get(GITIGNORE_BASE_URL % lang)
+        langPath = CONFIG["APP_PATH"] + lang + '.gitignore'
+        res = requests.get(CONFIG["GITIGNORE_BASE_URL"] % lang)
         data = refineData(res.text)
         with open(langPath, "w") as gigFile:
             gigFile.write(data)
@@ -67,23 +65,14 @@ def updateGitignoreFile(lang):
 
 
 def main():
-    langList = getGitIgnoreLanguages()
-    filteredMapping = {}
+    langList = utils.getGitIgnoreLanguages()
     try:
-        os.makedirs(APP_PATH)
+        os.makedirs(CONFIG["APP_PATH"])
     except:
         print("[-] Home directory exists")
-    langExtMapping = getLangExtMapping()
-    for lang in langList:
-        extensions = []
-        for key, value in langExtMapping.items():
-            if value.lower() == lang.lower():
-                extensions.append(key)
-        if len(extensions) != 0:
-            filteredMapping[lang] = extensions
 
-    with open(APP_PATH + "langs.json", "w") as file:
-        json.dump(filteredMapping, file)
+    langExtMapping = getLangExtMapping()
+    filteredMapping = getFilteredMapping(langList, langExtMapping)
 
     for lang, exts in filteredMapping.items():
         thread = Thread(target=updateGitignoreFile, args=(lang,))

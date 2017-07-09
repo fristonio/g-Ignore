@@ -2,20 +2,20 @@
 
 import os
 import json
-import sys
-import re
 import fnmatch
 import argparse
 from . import initScript
 from . import utils
+from .config import Config
 
 
-APP_PATH = os.environ['HOME'] + "/.gIgnore/"
+CONFIG = Config.getConfig()
+APP_PATH = CONFIG["APP_PATH"]
 
 
 def removeDuplicate(saved):
     """
-    Remove duplicate file matching from gitignore files
+    Remove duplicate file matchings from gitignore files
     """
     seen = []
     with open(".gitignore", "r") as gitIgn:
@@ -29,6 +29,9 @@ def removeDuplicate(saved):
 
 
 def refineGitignore(contents, files):
+    """
+    Ignore only those files which are present in the repository
+    """
     refinedContents = ""
     for exp in contents.split('\n'):
         for file in files:
@@ -53,6 +56,9 @@ def saveUserDefinedIgnores():
 
 
 def createGitignore(gitIgnoreLangs, files):
+    """
+    Creates or updates gitignores for the current repository structure
+    """
     saved = saveUserDefinedIgnores()
     with open(".gitignore", "w") as gitIgn:
         for lang in gitIgnoreLangs:
@@ -68,6 +74,9 @@ def createGitignore(gitIgnoreLangs, files):
 
 
 def getLangs(files):
+    """
+    Returns a python list of gIgnore supported languages used in the repo
+    """
     allExt = []
     for file in files:
         fileExt = '.' + file.split('.')[-1]
@@ -85,37 +94,8 @@ def getLangs(files):
     return gitIgnoreLangs
 
 
-def checkIfGitRepo():
-    files = os.listdir(os.getcwd())
-    if '.git' in files:
-        return True
-    return False
-
-
-def traverseDirectory(cwd):
-    """
-    Traverses current directory and returns a list of files and dirs present,
-    skips hidden directories
-    """
-    gitRepo = checkIfGitRepo()
-    allFiles = []
-    allDirs = []
-    if gitRepo:
-        for (curDir, dirs, files) in os.walk(cwd):
-            try:
-                re.search(r'/(\.\w+)', curDir).group(0)
-            except:
-                for d in dirs:
-                    allDirs.append(d + '/')
-                allFiles = allFiles + files
-        return allFiles, allDirs
-    else:
-        print("[-] Directory is not a git repository")
-        sys.exit(1)
-
-
 def handleGitignore():
-    allFiles, allDirs = traverseDirectory(os.getcwd())
+    allFiles, allDirs = utils.traverseDirectory(os.getcwd())
     gitIgnoreLangs = getLangs(allFiles)
     data = allDirs + allFiles
     createGitignore(gitIgnoreLangs, data)

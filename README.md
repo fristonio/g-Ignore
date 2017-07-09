@@ -1,7 +1,7 @@
 # gIgnore
 > gIgnore is a automatic gitignore generator tool for git repositories.
 
-### Installation
+## Installation
 
 * Clone the repo to your local system using `git clone https://github.com/fristonio/g-Ignore.git` and navigate to it.
 
@@ -9,29 +9,30 @@
 
 * The installation itself sets required **$PATH** variables and command `gign` can be used to run package.
 
-### Usage
+## Usage
 
 `gign [-h] [-u] [-s] [-i langIgnore]`
 
-Optional Arguments:
+**Optional Arguments:**
 
-  * **-h, --help**            show this help message and exit
-  * **-u, --update**          Update github/gitignores for gIgnore
-  * **-s, --supports**        Prints supported languages ...
-  * **-i [Language]** 		  To view standard ignores for the given language
+  * **-h, --help** :         show this help message and exit
+  * **-u, --update** :       Update github/gitignores for gIgnore
+  * **-s, --supports** :     Prints supported languages ...
+  * **-i [Language]** :      To view standard ignores for the given language
 
  If no argument is provided then app will run in default mode and create/update the .gitignore 
 
-### To-Do
+## To-Do
 
 * Add supports for framworks specific ignores.
 * Add supports for text-editors specific ignores.
+* Add feature to restore previous state of gitignores
 
-### Dependencies
+## Dependencies
 
 * [Python requests](https://pypi.python.org/pypi/requests)
 * [Python BeautifulSoup](https://pypi.python.org/pypi/beautifulsoup4)
 
-### License
+## License
 
 [MIT License](https://github.com/fristonio/g-Ignore/blob/master/LICENSE.md)

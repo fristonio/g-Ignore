@@ -12,6 +12,6 @@ setup(name="gIgnore",
                         ],
       entry_points={
           'console_scripts': [
-              'gign=gIgnore.gIgnore:main'
+              'gign = gIgnore.gIgnore:main'
           ],
       })
