@@ -6,8 +6,8 @@ import sys
 import re
 import fnmatch
 import argparse
-import initScript
-import utils
+from . import initScript
+from . import utils
 
 
 APP_PATH = os.environ['HOME'] + "/.gIgnore/"
@@ -114,11 +114,10 @@ def traverseDirectory(cwd):
         sys.exit(1)
 
 
-def main():
+def handleGitignore():
     allFiles, allDirs = traverseDirectory(os.getcwd())
     gitIgnoreLangs = getLangs(allFiles)
     data = allDirs + allFiles
-    print(data)
     createGitignore(gitIgnoreLangs, data)
     print("[*] Updated gitignore successfully")
 
@@ -143,11 +142,11 @@ def parseArgs():
     return args
 
 
-if __name__ == "__main__":
+def main():
     args = parseArgs()
     try:
         os.stat(APP_PATH)
-    except Exception as e:
+    except:
         print("[*] Initializing gIgnore ...")
 
     if args.update:
@@ -157,4 +156,8 @@ if __name__ == "__main__":
     elif args.langIgnore:
         utils.showLangIgnores(args.langIgnore)
     else:
-        main()
+        handleGitignore()
+
+
+if __name__ == "__main__":
+    main()

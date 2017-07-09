@@ -9,7 +9,7 @@ import sys
 
 GITIGNORE_URL = "https://github.com/github/gitignore"
 APP_PATH = os.environ['HOME'] + "/.gIgnore/"
-LANG_MAP_URL = "https://raw.githubusercontent.com/fristonio/Resources/master/lang-ext.json"
+LANG_MAP_URL = "https://raw.githubusercontent.com/fristonio/Resources/master/lang-ext.json?token=AUTlN77tEmAu0tHawfIJnZTvHyN7EeT3ks5ZZ77iwA%3D%3D"
 GITIGNORE_BASE_URL = "https://raw.githubusercontent.com/github/gitignore/master/%s.gitignore"
 
 
