@@ -8,7 +8,8 @@ setup(name="gIgnore",
       packages=['gIgnore'],
       install_requires=[
                         'requests',
-                        'bs4'
+                        'bs4',
+                        'lxml==3.7.3'
                         ],
       entry_points={
           'console_scripts': [

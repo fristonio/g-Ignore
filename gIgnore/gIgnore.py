@@ -125,9 +125,10 @@ def parseArgs():
 def main():
     args = parseArgs()
     try:
-        os.stat(APP_PATH)
+        os.stat(APP_PATH + "langs.json")
     except:
         print("[*] Initializing gIgnore ...")
+        initScript.main()
 
     if args.update:
         initScript.main()

@@ -32,6 +32,7 @@
 
 * [Python requests](https://pypi.python.org/pypi/requests)
 * [Python BeautifulSoup](https://pypi.python.org/pypi/beautifulsoup4)
+* [Python lxml](https://pypi.python.org/pypi/lxml)
 
 ## License
 

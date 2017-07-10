@@ -20,7 +20,8 @@ def getLangExtMapping():
         res = requests.get(CONFIG["LANG_MAP_URL"])
         mappingJson = json.loads(res.text)
         return mappingJson
-    except:
+    except Exception as e:
+        print(e)
         sys.stderr.write("[-] An error occurred while fetching language mapping")
         sys.exit(1)
 
@@ -68,8 +69,9 @@ def main():
     langList = utils.getGitIgnoreLanguages()
     try:
         os.makedirs(CONFIG["APP_PATH"])
+        print("[*] Creating gIgnore ... This might take a while")
     except:
-        print("[-] Home directory exists")
+        print("[*] Updating gIgnore")
 
     langExtMapping = getLangExtMapping()
     filteredMapping = getFilteredMapping(langList, langExtMapping)
