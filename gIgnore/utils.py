@@ -4,10 +4,7 @@ import os
 import json
 import re
 import sys
-from .config import Config
-
-
-CONFIG = Config.getConfig()
+from .config import CONFIG
 
 
 def showSupportedLangs():
@@ -86,3 +83,42 @@ def traverseDirectory(cwd):
     else:
         print("[-] Directory is not a git repository")
         sys.exit(1)
+
+
+def copyFileContents(fpath1, fpath2):
+    """
+    Copy the content of one file whose path is provided as first argument to the
+    file with path provided as second argument
+    """
+    if os.path.exists(fpath1):
+        with open(fpath1, "r") as file:
+            with open(fpath2, "w") as f:
+                f.write(file.read())
+        return True
+    else:
+        return False
+
+
+def saveCurrentVersion():
+    """
+    Saves current state of gitignore as a version that can be restored at any point of time
+    """
+    savedGignPath = CONFIG["APP_PATH"] + "data/" + os.getcwd().replace('/', '|') + ".gign"
+    gitignorePath = os.getcwd() + "/.gitignore"
+    if copyFileContents(gitignorePath, savedGignPath):
+        print("[*] Current version saved successfully")
+    else:
+        print("[-] No gitignore to save")
+
+
+def restorePreviousVersion():
+    """
+    Fetches previous version of gitignores overwrittern while creating a new
+    one with gIgnore.
+    """
+    savedGignPath = CONFIG["APP_PATH"] + "data/" + os.getcwd().replace('/', '|') + ".gign"
+    gitignorePath = os.getcwd() + "/.gitignore"
+    if copyFileContents(savedGignPath, gitignorePath):
+        print("[*] Gitignore restored successfully")
+    else:
+        print("[-] No gitignore to restore")

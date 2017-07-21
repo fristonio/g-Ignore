@@ -6,10 +6,9 @@ import fnmatch
 import argparse
 from . import initScript
 from . import utils
-from .config import Config
+from .config import CONFIG
 
 
-CONFIG = Config.getConfig()
 APP_PATH = CONFIG["APP_PATH"]
 
 
@@ -95,6 +94,7 @@ def getLangs(files):
 
 
 def handleGitignore():
+    utils.saveCurrentVersion()
     allFiles, allDirs = utils.traverseDirectory(os.getcwd())
     gitIgnoreLangs = getLangs(allFiles)
     data = allDirs + allFiles
@@ -118,6 +118,12 @@ def parseArgs():
                         "--langIgnore",
                         help="To view standard ignores for the given language",
                         )
+    parser.add_argument("-r",
+                        "--restore",
+                        help="To restore gitignore to a previous version",
+                        action="store_true"
+                        )
+
     args = parser.parse_args()
     return args
 
@@ -136,6 +142,8 @@ def main():
         utils.showSupportedLangs()
     elif args.langIgnore:
         utils.showLangIgnores(args.langIgnore)
+    elif args.restore:
+        utils.restorePreviousVersion()
     else:
         handleGitignore()
 

@@ -5,11 +5,11 @@ import requests
 import json
 import os
 import sys
-from .config import Config
+from .config import CONFIG
 from . import utils
 
 
-CONFIG = Config.getConfig()
+# CONFIG = Config.getConfig()
 
 
 def getLangExtMapping():

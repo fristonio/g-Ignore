@@ -19,14 +19,15 @@
   * **-u, --update** :       Update github/gitignores for gIgnore
   * **-s, --supports** :     Prints supported languages ...
   * **-i [Language]** :      To view standard ignores for the given language
+  * **-r --restore** :       To restore gitignore to the last version
 
- If no argument is provided then app will run in default mode and create/update the .gitignore 
+ If no argument is provided then app will run in default mode and create/update the .gitignore saving the current state of gitignore that can be restored later on.
 
 ## To-Do
 
-* Add supports for framworks specific ignores.
-* Add supports for text-editors specific ignores.
-* Add feature to restore previous state of gitignores
+- [ ] Add supports for framworks specific ignores.
+- [ ] Add supports for text-editors specific ignores.
+- [x] Add feature to restore previous state of gitignores
 
 ## Dependencies
 
